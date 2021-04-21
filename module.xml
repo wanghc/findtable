@@ -6,7 +6,7 @@
       <Version>1.0.0</Version>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
-      <Resource Name="web.Util.PKG"/>
+      <Resource Name="dhc.PKG"/>
     </Module>
   </Document>
 </Export>

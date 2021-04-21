@@ -1,5 +1,4 @@
-/// CT Location               (CTLOC,7)
-Class User.CTLoc Extends %Persistent [ ClassType = persistent, Not ProcedureBlock, SqlTableName = CT_Loc, StorageStrategy = SQLStorage ]
+Class dhc.user.CTLoc Extends %Persistent [ ClassType = persistent, Not ProcedureBlock, SqlTableName = CT_Loc, StorageStrategy = SQLStorage ]
 {
 
 /// Location Code

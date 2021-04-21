@@ -1,0 +1,168 @@
+<csp:content charset="utf-8">
+
+<script runat="server" language="cache">
+	s act = $g(%request.Data("act",1))
+	if (act="getAllTable"){
+		set schema = $g(%request.Data("schema",1))
+		set pre = $g(%request.Data("table",1))	
+		set rs=##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectTable")
+		set sc=rs.Execute(schema,"")  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit
+		w "{""schema"":"""_schema_""",""data"":["
+		if rs.Next() w """"_rs.Data("Table")_""""
+		while rs.%Next() {w ","""_rs.Data("Table") _""""}
+		w "]}"
+		q
+	}elseif (act="getTableAllColumn"){
+		set schema = $g(%request.Data("schema",1))
+		set table = $g(%request.Data("table",1))
+		set prn = $g(%request.Data("column",1))
+		if schema'="" s inpara=schema_"."_table
+		else  set inpara=table
+		Set tblInfo = $p(##class(dhc.web.util.DHCJFClassGlobal).GetTableInfo(inpara),"!")
+		Set schema = $p(tblInfo,".")
+		Set table = $p(tblInfo,".",2)
+		if 11=$d(^oddSQL(schema,table)){			
+			set rs=##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectColumn")
+			set sc=rs.Execute(schema,table,"")  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit		
+			w "{""schema"":"""_schema_""",""table"":"""_table_""",""data"":["
+			if rs.Next() w """"_rs.Data("Column")_""""
+			while rs.%Next() {w ","""_rs.Data("Column") _""""}
+			w "]}"
+		}else{
+			s %request.Data("act",1) = "getAllTable"
+			s %request.Data("schema",1) = schema
+			s %request.Data("table",1) = table
+			s %response.ServerSideRedirect = "dhctt.request.csp"
+		}
+		q
+	}elseif (act="getREFColumn"){
+		set schema = $g(%request.Data("schema",1))
+		set table = $g(%request.Data("table",1))
+		set column = $g(%request.Data("column",1))
+		set pre = $p(column,"->",$l(column,"->"))
+		set schemaTable = ##class(dhc.web.util.DHCJFClassGlobal).GetREF(schema,table,column)
+		set schema = $p(schemaTable,".")
+		set table = $p(schemaTable,".",2)
+		set rs = ##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectColumn")
+		set sc=rs.Execute(schema,table,pre)  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit
+		w "{""schema"":"""_schema_""",""table"":"""_table_""",""data"":["
+		if rs.Next() w """"_rs.Data("Column")_""""
+		while rs.%Next() {w ","""_rs.Data("Column") _""""}
+		w "]}"
+		q 
+	}elseif(act="getTableValueByID"){
+		s schemaTable = $g(%request.Data("schemaTable",1))
+		s idValue = $g(%request.Data("idValue",1))
+		s str = ##class(dhc.web.util.DHCJFClassGlobal).GetTableValueByID(schemaTable,idValue)
+		w $tr(str,"'","""")
+	}elseif (act="getTalbeNameList"){
+		set packageName = $g(%request.Data("packageName",1))
+		set className = $g(%request.Data("tableName",1))
+		//set className = "DHCPatBillDetailsOl"
+		;set ns = $namespace
+		;zn "dhc-app"	
+		set rs=##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectClass")
+		set sc=rs.Execute(packageName,className)  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit
+		w "{"
+		if rs.Next() w """"_rs.GetData(1)_""": """_rs.GetData(1)_""""
+		while rs.%Next() { 		
+			w ","""_rs.GetData(1) _""": """_ rs.GetData(1)_""""				
+		}
+		w "}"
+		;zn ns
+		q
+	} elseif(act="getTableListByPre"){
+		set packageName =  $g(%request.Data("P1",1))
+		set preTableName = $g(%request.Data("P2",1))		
+		set info=##class(dhc.web.util.DHCJFClassGlobal).GetTableListByPre(packageName,preTableName)
+		w info
+		q
+	}elseif(act="getFieldListByPre"){
+		set packageName =  $g(%request.Data("P1",1))
+		set preTableName = $g(%request.Data("P2",1))
+		set preFieldName = $g(%request.Data("P3",1))		
+		set info=##class(dhc.web.util.DHCJFClassGlobal).getFieldListByPre(packageName,preTableName,preFieldName)
+		w info
+		q
+	}elseif(act="getPropertyPiece"){
+		set tableName = $g(%request.Data("P1",1))
+		set propertyName = $g(%request.Data("P2",1))
+		set info=##class(dhc.web.util.DHCJFClassGlobal).GetPropertyPiece(tableName,propertyName)
+		w info
+		q
+	}elseif(act="getComponentNameList") {
+		set componentName = $g(%request.Data("componentName",1))
+		;set ns = $namespace
+		;zn "dhc-app"	
+		set rs=##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectComponent")
+		set sc=rs.Execute(componentName)  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit
+		set count = 1
+		w "{"
+		if rs.Next() w """"_rs.GetData(1)_""": """_rs.GetData(1)_""""
+		while rs.%Next(),count<13 { 		
+			w ","""_rs.GetData(1) _""": """_ rs.GetData(1)_""""				
+			s count=count+1
+		}
+		w "}"
+		;zn ns
+		q
+	} elseif (act="download"){
+		s filename = $g(%request.Data("filename",1))
+		s dirname = $g(%request.Data("dirname",1))
+		if (##class(%File).Exists(dirname_filename)){
+			s stream=##class(%FileCharacterStream).%New()
+			s stream.Filename=dirname_filename
+			;d %response.Reset()
+			s %response.ContentType = "text/xml" ;"application/x-download" ;"application/octet-stream"
+			d %response.SetHeader("Pragma", "No-cache")
+			d %response.SetHeader("Cache-Control", "No-cache")
+			s %response.Expires=0 ;setDateHeader("Expires", 0)
+			d %response.SetHeader("Content-Disposition", "attachment; filename="_filename)
+			d %response.SetHeader("Content-Length",stream.Size)
+			d %response.SetHeader("Content-Type","text/xml; charset=utf-8")
+			s %response.CharSet = "UTF-8" 
+			d stream.Rewind()
+			while('stream.AtEnd){
+				w $zcvt(stream.ReadLine(),"O","HTML")
+			}
+			d stream.Clear()
+			s stream=""
+			d %response.Flush()	
+		}else{
+			d %response.Abort()
+			w "404 没找到文件"	
+		}
+	} elseif (act="getSQLStatement"){
+		set SQLStatement = $g(%request.Data("SQLStatement",1))
+		set rs=##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectSchema")
+		set sc=rs.Execute(SQLStatement)  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit
+		set count = 1
+		w "{""data"":["
+		if rs.Next() w """"_rs.GetData(1)_""""
+		while rs.%Next(),count<13 { 		
+			w ","""_rs.GetData(1) _""""			
+			s count=count+1
+		}
+		w "]}"
+		;zn ns
+		q		
+	}elseif(act="updateSql"){
+		if $d(%session),$d(%session.Data("LOGON.USERID")){
+			Set tname = $g(%request.Data("tname",1))
+			Set cname = $g(%request.Data("cname",1))
+			Set cval = $g(%request.Data("cval",1))
+			Set cval = ##class(%CSP.Page).UnescapeURL(cval)
+			if cval[$c(34) set cval = $replace(cval,$c(34),$c(34,34)) ; contains "
+			Set ival = $g(%request.Data("ival",1))	
+			Set RuntimeMode = $g(%request.Data("RuntimeMode",1))
+			If (RuntimeMode="")||(RuntimeMode="undefined"){
+				Set RuntimeMode = 0
+			}
+			Set SQLStatement="update "_tname_" set "_cname_"="""_cval_""" where %id="""_ival_""""
+			d ##class(web.DHCTTSqlLog).ExecuteSQL(SQLStatement,RuntimeMode)
+		}else{
+			
+		}
+	}
+	q 1
+</script>

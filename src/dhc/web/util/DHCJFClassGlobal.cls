@@ -1,7 +1,7 @@
 /// author:wanghc
 /// date:  2009-11-12
 /// desc:  查询表的各属性
-Class web.Util.DHCJFClassGlobal Extends %RegisteredObject [ Not ProcedureBlock ]
+Class dhc.web.util.DHCJFClassGlobal Extends %RegisteredObject [ Not ProcedureBlock ]
 {
 
 ClassMethod GetUserRowid(packageName, className)
@@ -115,7 +115,7 @@ ClassMethod GetREF(Schema = "SQLUser", Table, Filed)
 
 /// d ##class(%ResultSet).RunQuery("web.Util.DHCJFClassGlobal","SelectColumn","SQLUser","PA_Adm","")
 /// input: Schema名,表名,列前缀名
-Query SelectColumn(Schema As %String, Table As %String, preColumn As %String) As websys.Query(ROWSPEC = "Column:%String,Type:%String")
+Query SelectColumn(Schema As %String, Table As %String, preColumn As %String) As dhc.websys.Query(ROWSPEC = "Column:%String,Type:%String")
 {
 }
 
@@ -161,7 +161,7 @@ ClassMethod SelectColumnExecute(ByRef qHandle As %Binary, Schema As %String, Tab
 /// d ##class(%ResultSet).RunQuery("web.Util.DHCJFClassGlobal","SelectTable","SQLUser","DHC_PhSendMsg")
 /// d ##class(%ResultSet).RunQuery("web.Util.DHCJFClassGlobal","SelectTable","SQLUser","DHCMedAdvRepNotes")
 /// input: Schema名,表的前缀名
-Query SelectTable(Schema As %String = "SQLUser", preTable As %String = "") As websys.Query(ROWSPEC = "Schema:%String,Table:%String,ClassName:%String")
+Query SelectTable(Schema As %String = "SQLUser", preTable As %String = "") As dhc.websys.Query(ROWSPEC = "Schema:%String,Table:%String,ClassName:%String")
 {
 }
 
@@ -193,7 +193,7 @@ ClassMethod SelectTableExecute(ByRef qHandle As %Binary, Schema As %String = "SQ
 
 /// @data 2013-04-20
 /// input: Schema前缀名
-Query SelectSchema(preSchema As %String = "") As websys.Query(ROWSPEC = "Schema:%String")
+Query SelectSchema(preSchema As %String = "") As dhc.websys.Query(ROWSPEC = "Schema:%String")
 {
 }
 
@@ -341,7 +341,7 @@ ClassMethod SelectGlobalFetch(ByRef qHandle As %Binary, ByRef Row As %List, ByRe
 
 /// 查询某包下所有global及对应信息
 /// d ##class(%ResultSet).RunQuery("web.Util.DHCJFClassGlobal","SelectGlobalInfo","websys")
-Query SelectGlobalInfo(PackageName As %String = "") As websys.Query(ROWSPEC = "SubScriptString:%String:Gloabl名称,Database:%String:数据库,IndexType:%String:索引类型,ClassAllName:%String:类名,TableName:%String:表名,createDate:%String:CreateDate,Mdata:%String")
+Query SelectGlobalInfo(PackageName As %String = "") As dhc.websys.Query(ROWSPEC = "SubScriptString:%String:Gloabl名称,Database:%String:数据库,IndexType:%String:索引类型,ClassAllName:%String:类名,TableName:%String:表名,createDate:%String:CreateDate,Mdata:%String")
 {
 }
 
@@ -660,11 +660,12 @@ ClassMethod SelectClassByGlobalFetch(ByRef qHandle As %Binary, ByRef Row As %Lis
 
 ClassMethod SelectChild(packageName As %String, className As %String) As %String
 {
+	Break ;1
 	New (packageName,className)
 	If className="" Quit ""
 	Set childNameStr=""
 	Set rs = ##class(%ResultSet).%New("%Dictionary.PropertyDefinition:Summary")
-	Do rs.Execute(className)
+	Do rs.Execute(packageName_"."_className)
 	While(rs.Next()) {
 		Set propertyName=rs.Data("Name")
 		Set propId=packageName_"."_className_"||"_propertyName

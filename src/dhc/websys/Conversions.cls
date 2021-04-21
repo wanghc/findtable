@@ -1,4 +1,4 @@
-Class websys.Conversions Extends %Library.RegisteredObject [ Not Abstract, ClassType = "" ]
+Class dhc.websys.Conversions Extends %Library.RegisteredObject [ Not Abstract, ClassType = "" ]
 {
 
 ClassMethod IsValidClassName(classname As %Library.String) As %Library.Boolean

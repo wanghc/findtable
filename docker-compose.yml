@@ -1,13 +1,13 @@
-version: '3.6'
+version: "3.6"
 services:
   iris:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     restart: always
-    ports: 
+    ports:
       - 1972
-      - 52773
+      - "56773:52773"
       - 53773
     volumes:
       - ./:/irisrun/repo

@@ -1,5 +1,5 @@
 /// CT Payment Mode          (CTPM,199)
-Class User.CTPayMode Extends %Persistent [ ClassType = persistent, Inheritance = right, Not ProcedureBlock, SqlTableName = CT_PayMode, StorageStrategy = SQLStorage ]
+Class dhc.user.CTPayMode Extends %Persistent [ ClassType = persistent, Inheritance = right, Not ProcedureBlock, SqlTableName = CT_PayMode, StorageStrategy = SQLStorage ]
 {
 
 Parameter EXTENTSIZE = 6;

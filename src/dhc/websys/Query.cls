@@ -1,7 +1,7 @@
 /// author: wanghc
 /// date: 2011-09-23
 /// desc: 写query的时候不用去写四个方法了,用类代码生成来实现编译时生成Excute,fetch,Close
-Class websys.Query Extends %Query [ Not ProcedureBlock ]
+Class dhc.websys.Query Extends %Query [ Not ProcedureBlock ]
 {
 
 ClassMethod Close(ByRef qHandle As %Binary) As %Status [ CodeMode = generator, PlaceAfter = Execute, ProcedureBlock = 1, ServerOnly = 1 ]

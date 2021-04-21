@@ -1,0 +1,112 @@
+<html>
+<head>
+	<link href="../favicon.ico" mce_href="../favicon.ico" rel="bookmark" type="image/x-icon"/>
+	<link href="../favicon.ico" mce_href="../favicon.ico" rel="icon" type="image/x-icon"/>
+	<link href="../favicon.ico" mce_href="../favicon.ico" rel="shortcut" type="image/x-icon"/>
+	<link rel="stylesheet" type="text/css" href="css/dhcttwebsys.css" title="Standard Style">
+	<script type="text/javascript" src="scripts/tip.js"></script>
+	<script type="text/javascript" src="scripts/DHCTable.js"></script>
+	<csp:method name=OnPreHTTP arguments="" returntype=%Boolean>
+		S findpn = "packageName"
+		S findgn = "globalName"
+		s findtn = "tableName"
+		S findurl = "findtablestructure.csp"
+		s reqPnValue = $g(%request.Data(findpn,1))
+		s reqGnValue = $g(%request.Data(findgn,1))
+		s width200="style='width:200px'"
+		s width250="style='width:250px'"
+		s width600="style='width:600px'"
+		s width100="style='width:100px'"
+		q 1
+	</csp:method>
+	<title>Find Global Title</title>
+	<SCRIPT language=CACHE RUNAT=SERVER METHOD=CreateUrl RETURNTYPE=%String ARGUMENTS="pn:%String,tn:%String">
+		q findurl_"?"_findpn_"="_pn_"&"_findtn_"="_tn
+	</SCRIPT>
+</head>
+<body>
+<div style="margin:2px 5px 0px 20px" >
+	<table>
+		<tr><td class='greentitle'>findGlobal:</td></tr>
+		<tr>	
+			
+			<td>
+				<form action="findglobal.csp">
+					packageName: <input type="text" name="packageName" id="packageName" value="#($s(reqPnValue:reqPnValue,1:"dhc.user"))#" />
+					globalName: <input type="search" name="globalName" id="globalName" autocomplete="off" value="#(reqGnValue)#" required=true/>	
+					<input id='find' type="submit" value="Find" />
+				</form>
+			</td>
+		</tr>
+		<tr><td><font class='greentitle'>ClassAndGlobal</font></td></tr>
+		<tr>
+			
+			<td valign="top">
+				<table border=0 id="ClassAndGlobalTableTitle"  cellpadding="0" cellspacing="0"  style='table-layout:fixed;'  >				
+					<thead>
+						<TH #(width250)#>ClassAllName</TH>
+						<TH #(width200)#>TableName</TH>
+						<TH #(width600)#>SubScriptString</TH>
+						<TH #(width100)#>IndexType</TH>
+					</thead>
+					<tbody align='center'>
+						<tr class='bgcolorgreen'>
+							<script language=CACHE RUNAT=SERVER>
+							;ClassAllName,TableName,SubScriptString,IndexType
+							s colstr=$lb("ClassAllName","TableName","SubScriptString","IndexType")
+							s c1=$lg(colstr,1), c2=$lg(colstr,2), c3=$lg(colstr,3), c4=$lg(colstr,4)
+							w "<td title='ClassAllName Tip'><input id='"_c1_"'></td>"
+							w "<td title='TableName Tip'><input id='"_c2_"'></td>"
+							w "<td title='SubScriptString Tip'><input id='"_c3_"'></td>"
+							w "<td title='IndexType Tip'><input id='"_c4_"' style='width:60'></td>"
+							</SCRIPT>
+						 </tr>
+					</tbody>
+				</table>
+				<div style='height:490; overflow: auto'>
+					<table border=1 id="ClassAndGlobalTable" cellpadding="0" cellspacing="0" style='table-layout:fixed;' >	
+						<tbody align='left'>
+						<script language=CACHE RUNAT=SERVER>		
+							s len = 0
+							i (reqPnValue="") || (reqGnValue="") d
+							.;w "<tr><td></td><td></td><td></td><td></td></tr>"									
+							e  d
+							.s infoRS = ##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectClassByGlobal")
+							.set sc=infoRS.Execute(reqPnValue,reqGnValue)  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit										
+							.while infoRS.Next() {
+							.s len=len+1					
+							.s classAllName=infoRS.GetDataByName(c1)
+							.s clen=$l(classAllName,".")
+							.w "<tr><td "_width250_"><label id='"_c1_"z"_len_"'><a href="_..CreateUrl($p(classAllName,".",1,clen-1),$p(classAllName,".",clen))_" target='_blank'>"_classAllName_"</a></label></td>"
+							.w "<td "_width200_"><label id='"_c2_"z"_len_"'>"_infoRS.GetDataByName(c2)_"</label></td>"
+							.w "<td "_width600_"><label id='"_c3_"z"_len_"'>"_infoRS.GetDataByName(c3)_"</label></td>"
+							.w "<td "_width100_"><label id='"_c4_"z"_len_"'>"_infoRS.GetDataByName(c4)_"</label></td>"
+							.}
+							.d infoRS.%Close()
+							.s infoRS=""
+						</script>
+						</tbody>
+					</table>
+				</div>
+			<td>	
+		</tr>
+	</table>
+</div>
+<script type='text/javascript'>
+	var ClassAndGlobalTable = document.getElementById("ClassAndGlobalTable");
+	var ClassAndGlobalTableTitle = document.getElementById("ClassAndGlobalTableTitle");			
+	DHC.addEventListener(ClassAndGlobalTable,"keyup",DHCTable.tableEnterKeyupHandler);	
+	DHC.addEventListener(ClassAndGlobalTable,"click",DHCTable.tableClickRowHandler);
+	DHC.addEventListener([ClassAndGlobalTableTitle],"keyup",function(e){
+		var keycode = DHC.getKeyCode(e) ;
+		var input = DHC.getTarget( e );
+		var row = DHC.getRow( input );				
+		if( keycode === 13) {			
+			if ( input.tagName == "INPUT" ){	
+				DHCTable.filterTalbe( ClassAndGlobalTable,row );
+			}
+		}
+	});		
+</script>
+</body>
+</html>

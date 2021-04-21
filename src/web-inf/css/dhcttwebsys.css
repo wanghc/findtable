@@ -1,0 +1,81 @@
+body {
+  margin:0;
+  padding:0;
+  /*BACKGROUND-COLOR:#dee8f6;*/
+  font:small "Trebuchet MS",Verdana,Arial,sans-serif;
+}
+#propertyPiecez1{
+	width:100px;
+}
+#propertyColumnz1{
+	width:100px;
+}
+table { 
+	border-collapse: collapse; 	
+	font: 12px/150% Verdana, Arial, Helvetica, sans-serif; 
+} 
+table th { 
+	padding: 4px 0px; 
+	border: 1px solid #a9bfd3; /*#f60; */
+	border-width: 2px 1px 1px; 
+	background: #d0def0; /* wheat;*/
+	font-size: 14px; 
+}
+.bgcolorgreen {
+	background-color: #d0def0; /*lightsalmon;*/
+}
+.bgcolorddark{
+	background-color:#DDEEFF;
+}
+/*tip tool div*/
+.tipDiv{
+	background-color: #fafafa;
+    border: 1px #dfdfff solid;
+    border-radius: 10px;	
+}
+ /*selected row color*/
+tr.RowSelColor{
+	BACKGROUND-COLOR: #ffff99;
+}
+
+#indexStructTable tr{
+	cursor:hand
+}
+#indexInfoTable tr{
+	cursor:hand
+}
+.greentitle{
+	color:green;
+}
+.MenuSelected{
+	background-color:#ffff99;
+}
+.console-x1{
+	width:60px;
+	height:30px;
+	background:#c0c0c0;
+}
+.console-x2{
+	width:300px;
+	height:200px;
+	background:#c0c0c0;
+}
+.console-x1 a:link {color: blue; text-decoration:none;} 
+.console-x2 a:link {color: blue; text-decoration:none;}
+.keyword{
+	color:#00a;
+	font-weight: bold;
+}
+.string{
+	color:#ff0000;
+}
+.sqltable{
+	color:green;
+}
+.divMouseFocus{
+	border:1px solid #4d90fe;
+}
+.divMouseOut{
+	border:1px solid #d9d9d9;
+	overflow:hidden;
+} 

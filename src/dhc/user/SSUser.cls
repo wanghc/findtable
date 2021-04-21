@@ -1,5 +1,11 @@
-Class User.SSUser Extends %Persistent [ ClassType = persistent, Inheritance = right, Not ProcedureBlock, SqlTableName = SS_User, StorageStrategy = SQLStorage ]
+Class dhc.user.SSUser Extends %Persistent [ ClassType = persistent, Inheritance = right, Not ProcedureBlock, SqlTableName = SS_User, StorageStrategy = SQLStorage ]
 {
+
+Relationship ChildSSUserWindow As dhc.user.SSUserWindow [ Cardinality = children, Inverse = WINParRef ];
+
+Relationship ChildSSUserDepartFunction As dhc.user.SSUserDepartFunction [ Cardinality = children, Inverse = DFParRef ];
+
+Relationship ChildSSUserSettings As dhc.user.SSUserSettings [ Cardinality = children, Inverse = SETParRef ];
 
 /// Initials 
 Property SSUSRInitials As %String(COLLATION = "AlphaUp", MAXLEN = 20, TRUNCATE = 1) [ Required, SqlColumnNumber = 2, SqlFieldName = SSUSR_Initials ];
@@ -11,7 +17,7 @@ Property SSUSRName As %String(COLLATION = "AlphaUp", MAXLEN = 40, TRUNCATE = 1) 
 Property SSUSRPassword As %String(COLLATION = "Exact", MAXLEN = 20, TRUNCATE = 1) [ Required, SqlColumnNumber = 4, SqlFieldName = SSUSR_Password ];
 
 /// DEs Ref to CTLOC
-Property SSUSRDefaultDeptDR As User.CTLoc [ SqlColumnNumber = 7, SqlFieldName = SSUSR_DefaultDept_DR ];
+Property SSUSRDefaultDeptDR As dhc.user.CTLoc [ SqlColumnNumber = 7, SqlFieldName = SSUSR_DefaultDept_DR ];
 
 Storage SQLStorage
 {

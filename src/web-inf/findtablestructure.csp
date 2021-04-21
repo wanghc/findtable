@@ -1,0 +1,182 @@
+<!--<csp:content charset="utf-8">-->
+<html>
+<head>
+	<link href="../favicon.ico" mce_href="../favicon.ico" rel="bookmark" type="image/x-icon"/>
+	<link href="../favicon.ico" mce_href="../favicon.ico" rel="icon" type="image/x-icon"/>
+	<link href="../favicon.ico" mce_href="../favicon.ico" rel="shortcut" type="image/x-icon"/>
+	<link rel="stylesheet" type="text/css" href="css/dhcttwebsys.css" title="Standard Style">
+	<script type="text/javascript" src="scripts/tip.js"></script>
+	<script type="text/javascript" src="scripts/DHCTable.js"></script>
+	<SCRIPT language="CACHE" RUNAT=SERVER>
+		Set findpn = "packageName"
+		Set findtn = "tableName"
+		Set findmin= "masterIndexName"		
+		Set findurl = "findtablestructure.csp"
+		s reqPnValue = $g(%request.Data(findpn,1))
+		s reqTnValue = $g(%request.Data(findtn,1))
+		s reqMinValue = $g(%request.Data(findmin,1))
+	</SCRIPT>
+	<title>Find Table Structure</title>
+	<SCRIPT language=CACHE RUNAT=SERVER METHOD=CreateUrl RETURNTYPE=%String ARGUMENTS="pn:%String,tn:%String,min:%String">
+		Quit findurl_"?"_findpn_"="_pn_"&"_findtn_"="_tn_"&"_findmin_"="_min
+	</SCRIPT>
+</head>
+<body>
+	<input type="hidden" value="nameClassTipConfig" id="nameClassTipConfig">
+	<table style="height:94%">
+		<tr><td>find table structure:</td><td class='greentitle' ></td></tr>
+		<tr>	
+			<td></td>
+			<td>
+				<form action="#(findurl)#">
+					packageName: <input type="text" name="packageName" id="packageName" value=#($SELECT(reqPnValue'="":reqPnValue,1:"dhc.user"))# required=true/>
+					ClassName: <input type="search" name="tableName" id="tableName" autocomplete="off" value="#(reqTnValue)#" placeholder="Class Name" required=true/>	
+					<input id='find' type="submit" value="Find">
+				</form>
+			</td>
+			<td>parentClass:
+				<script language=CACHE RUNAT=SERVER>					
+					Set parentTable = ##class(dhc.web.util.DHCJFClassGlobal).SelectParent(reqPnValue,reqTnValue)
+					If parentTable '= "" Do
+					.Write "<a id='parentTable' href='"_..CreateUrl(reqPnValue,parentTable,"")_"' >"_parentTable_"</a>"
+				</SCRIPT>
+			</td>			
+		</tr>
+					
+		<tr>
+			<td>children table</td>
+			<td><font class='greentitle'>table index structure</font></td>
+		</tr>
+		<tr valign="top">
+			<td>
+				<div style='height:150; overflow: auto'><table>
+				<!--create children table-->
+				<script language=CACHE RUNAT=SERVER>									
+					Set len = 0
+					Set childrenTable = ##class(dhc.web.util.DHCJFClassGlobal).SelectChild(reqPnValue,reqTnValue)										
+					If (childrenTable'="") Do					
+					.Set len = $LENGTH(childrenTable,"^")					
+					.For i=1:1:len Do
+					..Set childTable=$PIECE(childrenTable,"^",i)
+					..Write "<tr><td><a href='"_..CreateUrl(reqPnValue,childTable,"")_"' >"_childTable_"</a></td></tr>"
+				</SCRIPT>
+				</table></div>
+			</td>
+			<td colspan=3>
+				<table border=1 cellpadding="0" cellspacing="0"  style='table-layout:fixed;' id="indexStructTableTitle">
+					<thead>
+						<TH><div style="width:95px;">Index Type</div></TH>
+						<TH><div  style="width:200px;">Map Name</div></TH>
+						<TH><div style="width:850px;">Index Detail</div></TH>
+					</thead>
+				</table>
+				<div style='height:150; overflow: auto'>				
+				<table border=1 cellpadding="0" cellspacing="0" style='table-layout:fixed;' id="indexStructTable">
+					<!--create index struct table-->
+					<script language=CACHE RUNAT=SERVER>					
+						Write "<tbody>"
+						Set len = 0
+						If (reqPnValue="") || (reqTnValue="") Do
+						.Write "<tr><td></td><td></td><td></td></tr>"									
+						Else  Do
+						.Set mastersRS = ##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectMaster")
+						.Set sc=mastersRS.Execute(reqPnValue,reqTnValue)  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit										
+						.While mastersRS.Next() {	//..CreateUrl(reqPnValue,reqTnValue,mastersRS.GetDataByName("indexName"))
+						.Write "<tr align='center'><td><div style='width:95px;'>"_mastersRS.GetDataByName("type")_"</div></td>"
+						.Write "<td><div style='width:200px;'>"_$SELECT(mastersRS.GetDataByName("type")="data":"<a href='#'>"_mastersRS.GetDataByName("indexName")_"</a>",1:mastersRS.GetDataByName("indexName"))_"</div></td>"
+						.Write "<td align='left'><div style='width:850px;'>"_mastersRS.GetDataByName("indexMasterData")_"</div></td></tr>"}						
+						.Do mastersRS.%Close()
+						.Set mastersRS=""
+						Write "</tbody>"
+					</SCRIPT>
+				</table>
+				</div>
+			</td>
+		</tr>
+		<tr valign="top">
+			<td style="width:190px">
+				<div style='height:300; overflow: auto' id="historyListDiv"></div>	
+			</td>
+			<td valign="top" colspan=3>
+				<table border=0 id="indexInfoTableTitle"  cellpadding="0" cellspacing="0"  style='table-layout:fixed;'  >
+					<thead>
+						<TH><div style="width:250px">Property Name</div></TH>
+						<TH><div style="width:100px">Node</div></TH>
+						<TH><div style="width:100px">Delimiter</div></TH>
+						<TH><div style="width:110px">Piece</div></TH>
+						<TH><div style="width:220px">Type</div></TH>			
+						<TH><div style="width:250px">Field</div></TH>
+						<TH><div style="width:110px">PList</div></TH>
+						<TH><div style="width:110px">Field Desc</div></TH>
+					</thead>
+					<tbody align='center' id='TableIndexInfoTitle'>
+						<tr class='bgcolorgreen'>
+						<script language=CACHE RUNAT=SERVER>
+						Set colstr=$LISTBUILD("propertyName","propertyNode","propertyDeli","propertyPiece","propertyType","propertyField","propertyColumn","propertyDesc")
+						Set c1=$LISTGET(colstr,1), c2=$LISTGET(colstr,2), c3=$LISTGET(colstr,3), c4=$LISTGET(colstr,4), c5=$LISTGET(colstr,5), c6=$LISTGET(colstr,6), c7=$LISTGET(colstr,7),c8=$LISTGET(colstr,8)
+						Write "<td style='width:250px' title='Property Name Filter Tip'><input id='"_c1_"'></td>"
+						Write "<td style='width:100px' title='Property Node Filter Tip'><input id='"_c2_"'  style='width:100px'></td>"
+						Write "<td style='width:100px'>^</div></td>"
+						Write "<td style='width:110px' title='Piece Filter Tip'><input id='"_c4_"' style='width:100px'></td>"
+						Write "<td style='width:220px' title='Property Type Filter Tip'><input id='"_c5_"'></td>"
+						Write "<td style='width:250px' title='Field Filter Tip'><input id='"_c6_"'></td>"
+						Write "<td style='width:110px' title='PList Filter Tip'><input id='"_c7_"' style='width:100px'></td>"
+						Write "<td style='width:110px' title='Field Desc'><input id='PropertyDesc' style='width:100px'></td>"
+						</SCRIPT>
+						 </tr>
+					</tbody>	
+				</table>
+				<div style='height:290; overflow: auto'>
+					<table border=1 id="indexInfoTable" cellpadding="0" cellspacing="0" style='table-layout:fixed;' >	
+						<tbody align='center' id='TableIndexInfo'>
+						<script language=CACHE RUNAT=SERVER>
+							;propertyName,propertyNode,propertyDeli,propertyPiece,propertyType,propertyField,propertyColumn						
+							Set len = 0
+							If (reqPnValue="") || (reqTnValue="") Do
+							.;w "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>"									
+							Else  Do
+							.Set infoRS = ##class(%ResultSet).%New("dhc.web.util.DHCJFClassGlobal:SelectProperty")
+							.Set sc=infoRS.Execute(reqPnValue,reqTnValue,reqMinValue)  If $$$ISERR(sc) Do DisplayError^%apiOBJ(sc) Quit										
+							.While infoRS.Next() {
+							.Set len=len+1
+							.Set type=infoRS.GetDataByName(c5),typelen=$LENGTH(type,".")
+							.Write "<tr><td align='left'><div style='width:250px'><label id='"_c1_"z"_len_"'>"_infoRS.GetDataByName(c1)_"</label></div></td>"
+							.Write "<td><div style='width:100px'><label id='"_c2_"z"_len_"'>"_infoRS.GetDataByName(c2)_"</label></div></td>"
+							.Write "<td><div style='width:100px'><label id='"_c3_"z"_len_"'>"_infoRS.GetDataByName(c3)_"</label></div></td>"
+							.Write "<td><div style='width:110px'><label id='"_c4_"z"_len_"'>"_infoRS.GetDataByName(c4)_"</label></div></td>"
+							.Write "<td><div style='width:220px'  align='left'><label id='"_c5_"z"_len_"'>"_$SELECT($EXTRACT(type,1)="%":type,1:"<a href="_..CreateUrl($PIECE(type,".",1,typelen-1),$PIECE(type,".",typelen),"")_">"_type_"</a>")_"</div></td>"
+							.Write "<td><div style='width:250px'  align='left'><label id='"_c6_"z"_len_"'>"_infoRS.GetDataByName(c6)_"</label></div></td>"
+							.Write "<td><div style='width:110px'><label id='"_c7_"z"_len_"'>"_infoRS.GetDataByName(c7)_"</label></div></td>"
+							.Write "<td align='left'><div style='width:110px;word-break: break-all;' id='"_c8_"z"_len_"'>"_infoRS.GetDataByName(c8)_"</div></td></tr>"
+							.}	
+							.Do infoRS.%Close()
+							.Set infoRS=""										
+						</script>
+						 </tbody>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+	
+	<script type="text/javascript">
+		var indexInfoTable = document.getElementById("indexInfoTable");	
+		var indexInfoTableTitle = document.getElementById("indexInfoTableTitle");			
+		var indexStructTable = document.getElementById("indexStructTable");
+				
+		DHC.addEventListener([indexStructTable,indexInfoTable],"keyup",DHCTable.tableEnterKeyupHandler );
+		DHC.addEventListener([indexStructTable,indexInfoTable],"click",DHCTable.tableClickRowHandler );	
+		DHC.addEventListener([indexInfoTableTitle],"keyup",function(e){
+				var keycode = DHC.getKeyCode(e) ;
+				var input = DHC.getTarget( e );
+				var row = DHC.getRow( input );				
+				if( keycode === 13) {			
+					if ( input.tagName == "INPUT" ){	
+						DHCTable.filterTalbe( indexInfoTable,row );
+					}
+				}
+		});
+	</script>
+	<script type="text/javascript" src="scripts/findtablestructure.js"></script>
+</body>
+</html>
