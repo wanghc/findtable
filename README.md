@@ -46,4 +46,4 @@ USER>write $zv
 
 3. Find Table Page
 
-   ![演示](finddemo.gif)
+   ![演示](https://openexchange.intersystems.com/mp/img/packages/1329/screenshots/ohxdp8skrelyypa0nwi1tbbhyo.gif)
