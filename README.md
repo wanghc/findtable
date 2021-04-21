@@ -42,7 +42,7 @@ USER>write $zv
 
 1. Input PackageName，ClassName / GlobalName
 
-2. Click <Find>
+2. Click the find button
 
 3. Find Table Page
 
