@@ -8,23 +8,23 @@ Make sure you have [git](https://git-scm.com/book/en/v2/Getting-Started-Installi
 
 ## Installation
 
-Clone/git pull the repo into any local directory
+1. Clone/git pull the repo into any local directory
 
-```
-$ git clone https://github.com/wanghc/findtable.git
-```
+    ```
+    $ git clone https://github.com/wanghc/findtable.git
+    ```
 
-Open the terminal in this directory and run:
+2. Open the terminal in this directory and run:
 
-```
-$ docker-compose build
-```
+    ```
+    $ docker-compose build
+    ```
 
 3. Run the IRIS container with your project:
 
-```
-$ docker-compose up -d
-```
+    ```
+    $ docker-compose up -d
+    ```
 
 4. Access [findtable](http://127.0.0.1:56773/csp/user/findglobal.csp) or [findglobal](http://127.0.0.1:56773/csp/user/findglobal.csp) with browser
 
