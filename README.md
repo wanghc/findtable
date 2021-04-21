@@ -1,6 +1,8 @@
 # findtable
 
-Find table structure tool. 因为 IRIS 的表结构与数据都是以 Global 方式存储的，取数据时可以使用$p或$lg 来取对应字段的值，要找到具体的 piece 位置则要通过 CacheSQLStorage 与 CacheStorage 来查看，不方便，固编写表结构查询工具，通过包名与类名找到所有 Index 与字段描述，方便开发者编写代码。
+Find table structure tool. 
+
+Because the table structure and data of iris are stored in a global way, when fetching data, you can use $P or $LG to get the value of the corresponding field. To find the specific piece location, you need to view it through cachesqlstorage and cachestorage, which is inconvenient. It is fixed to write a table structure query tool to find all indexes and field descriptions through package name and class name, which is convenient for developers to write code.
 
 ## Prerequisites
 
