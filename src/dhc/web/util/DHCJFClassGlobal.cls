@@ -3,7 +3,16 @@
 /// desc:  查询表的各属性
 Class dhc.web.util.DHCJFClassGlobal Extends %RegisteredObject [ Not ProcedureBlock ]
 {
-
+ClassMethod Init() As %Status
+{
+	new $namespace
+	set $namespace="%SYS"
+	set Status=##Class(Config.Startup).Get(.Properties)
+	set Url=":52773/web-inf/findglobal.csp"
+	if Status set Url=":"_$g(Properties("WebServerPort"),52773)_"/web-inf/findglobal.csp" 
+	write !!,"load in browser http://"_$zconvert($zu(110),"L")_Url,!
+	quit $$$OK
+}
 ClassMethod GetUserRowid(packageName, className)
 {
 	New (className,packageName)
