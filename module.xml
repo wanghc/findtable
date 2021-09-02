@@ -3,10 +3,24 @@
   <Document name="objectscript-findtable.ZPM">
     <Module>
       <Name>objectscript-findtable</Name>
-      <Version>1.0.0</Version>
+	  <Description>Find table structure tool</Description>
+      <Version>1.0.1</Version>
       <Packaging>module</Packaging>
       <SourcesRoot>src</SourcesRoot>
-      <Resource Name="dhc.PKG"/>
-    </Module>
+      <Resource Name="dhc.PKG" />
+	  <Invoke Class="dhc.web.util.DHCJFClassGlobal" Method="Init"></Invoke>
+	  <CSPApplication
+        SourcePath="/src/web-inf"
+        DeployPath="${cspdir}web-inf"
+        Url="/web-inf"
+        ServeFiles="1"
+        Recurse="1"
+        CookiePath="/web-inf"
+        UseCookies="2"
+        MatchRoles=":{$dbrole}"
+        PasswordAuthEnabled="0"
+        UnauthenticatedEnabled="0"
+       />
+	  </Module>
   </Document>
 </Export>
